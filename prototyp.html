@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IRZplus Asystent - prototyp</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f5f7f8;
+      --panel: #ffffff;
+      --ink: #1f2933;
+      --muted: #65717c;
+      --line: #d8e0e6;
+      --accent: #0f6cbd;
+      --accent-weak: #e7f1fb;
+      --warn: #ad6800;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 24px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 650;
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px;
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 16px;
+    }
+
+    section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      padding: 14px;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: 15px;
+    }
+
+    .notice {
+      border-left: 4px solid var(--warn);
+      background: #fff8e5;
+      color: #5f3b00;
+      padding: 10px 12px;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .item {
+      border: 1px solid var(--line);
+      padding: 10px;
+      background: #fbfcfd;
+    }
+
+    .item strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .item span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    button {
+      min-height: 34px;
+      border: 1px solid var(--accent);
+      background: var(--accent);
+      color: #fff;
+      padding: 0 12px;
+      font: inherit;
+      font-weight: 650;
+      cursor: pointer;
+    }
+
+    .mock {
+      border: 1px dashed #b8c4ce;
+      min-height: 420px;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      background: #fbfcfd;
+      text-align: center;
+      padding: 24px;
+    }
+
+    @media (max-width: 860px) {
+      main { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>IRZplus Asystent</h1>
+    <button id="copyIdea">Kopiuj opis celu</button>
+  </header>
+
+  <main>
+    <section>
+      <h2>Cel</h2>
+      <p class="notice">To jest osobny projekt dla nakładki/asystenta IRZplus. Nie jest częścią analizatora przemieszczeń.</p>
+      <div class="list">
+        <div class="item">
+          <strong>Kontekst sprawy</strong>
+          <span>Wyciąganie najważniejszych numerów i informacji z aktualnego widoku.</span>
+        </div>
+        <div class="item">
+          <strong>Podświetlanie danych</strong>
+          <span>Łatwe śledzenie numerów zwierząt, działalności i dokumentów.</span>
+        </div>
+        <div class="item">
+          <strong>Szybkie kopiowanie</strong>
+          <span>Przenoszenie danych do notatek, raportów albo analizatora bez ręcznego przepisywania.</span>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Obszar prototypu</h2>
+      <div class="mock">
+        Tu będziemy projektować panel nakładki i testować, które informacje z IRZplus warto pokazać od razu.
+      </div>
+    </section>
+  </main>
+
+  <script>
+    document.querySelector("#copyIdea").addEventListener("click", async () => {
+      await navigator.clipboard.writeText("IRZplus Asystent: nakładka poprawiająca ergonomię pracy, podświetlanie danych, szybkie kopiowanie i panel kontekstu sprawy.");
+    });
+  </script>
+</body>
+</html>
