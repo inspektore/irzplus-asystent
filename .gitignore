@@ -1,0 +1,8 @@
+# Local captures from IRZplus can contain personal/session context.
+ARiMR - IRZplus*.htm
+ARiMR - IRZplus*_files/
+*.har
+*.webarchive
+
+# Local screenshots/materials for analysis.
+materialy/
