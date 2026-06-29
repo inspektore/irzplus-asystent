@@ -12,7 +12,8 @@
   const state = {
     activityNumber: "",
     collapsed: false,
-    messageTimer: null
+    messageTimer: null,
+    collecting: false
   };
 
   const storage = {
@@ -222,6 +223,10 @@
         line-height: 1.3;
       }
 
+      .control-date {
+        margin-bottom: 9px;
+      }
+
       .message {
         min-height: 32px;
         margin-top: 12px;
@@ -271,6 +276,12 @@
           <p class="range"><span id="irza-date-from"></span><span id="irza-date-to"></span></p>
           <button class="action primary" id="irza-fill-report" type="button">Uzupełnij formularz</button>
         </section>
+        <section class="section" id="irza-list-section" hidden>
+          <h3 class="section-title">Lista kontrolna zwierząt</h3>
+          <label for="irza-control-date">Stan na dzień</label>
+          <input class="control-date" id="irza-control-date" inputmode="numeric" placeholder="DD-MM-RRRR" maxlength="10">
+          <button class="action primary" id="irza-create-list" type="button">Przygotuj listę</button>
+        </section>
         <div class="message" id="irza-message" role="status">Asystent jest gotowy.</div>
       </div>
       <div class="footer">Wersja testowa. Dane pozostają w tej przeglądarce.</div>
@@ -288,6 +299,9 @@
     detect: shadow.querySelector("#irza-detect"),
     reportSection: shadow.querySelector("#irza-report-section"),
     fillReport: shadow.querySelector("#irza-fill-report"),
+    listSection: shadow.querySelector("#irza-list-section"),
+    controlDate: shadow.querySelector("#irza-control-date"),
+    createList: shadow.querySelector("#irza-create-list"),
     dateFrom: shadow.querySelector("#irza-date-from"),
     dateTo: shadow.querySelector("#irza-date-to"),
     message: shadow.querySelector("#irza-message")
@@ -313,6 +327,10 @@
   function isReportForm() {
     const labels = [...document.querySelectorAll("label")].map((label) => normalize(label.textContent));
     return labels.includes("Data wpływu od") && labels.includes("Data zdarzenia do");
+  }
+
+  function isAnimalList() {
+    return Boolean(findAnimalTable());
   }
 
   function formatDate(date) {
@@ -386,6 +404,288 @@
     control.dispatchEvent(new Event("blur", { bubbles: true }));
   }
 
+  function tableHeaders(table) {
+    return [...table.querySelectorAll("thead th")].map((cell) => normalize(cell.textContent));
+  }
+
+  function findAnimalTable() {
+    return [...document.querySelectorAll("table")].find((table) => {
+      const headers = tableHeaders(table).join(" | ");
+      return headers.includes("Numer identyfikacyjny zwierzęcia")
+        && headers.includes("Data urodzenia")
+        && headers.includes("Płeć");
+    }) ?? null;
+  }
+
+  function matchingHeaderIndex(headers, expected) {
+    return headers.findIndex((header) => normalize(header).includes(expected));
+  }
+
+  function cellValue(cells, index) {
+    return index >= 0 && cells[index] ? normalize(cells[index].textContent) : "";
+  }
+
+  function extractAnimalsFromTable() {
+    const table = findAnimalTable();
+    if (!table) {
+      return [];
+    }
+
+    const headers = tableHeaders(table);
+    const indexes = {
+      id: matchingHeaderIndex(headers, "Numer identyfikacyjny zwierzęcia"),
+      activity: matchingHeaderIndex(headers, "Numer działalności"),
+      breed: matchingHeaderIndex(headers, "Rasa"),
+      sex: matchingHeaderIndex(headers, "Płeć"),
+      birthDate: matchingHeaderIndex(headers, "Data urodzenia"),
+      status: matchingHeaderIndex(headers, "Status zwierzęcia")
+    };
+
+    return [...table.querySelectorAll("tbody tr")].flatMap((row) => {
+      const cells = [...row.querySelectorAll("td")];
+      const rowText = normalize(row.textContent);
+      const id = cellValue(cells, indexes.id).match(/\bPL\d{12}\b/)?.[0]
+        ?? rowText.match(/\bPL\d{12}\b/)?.[0];
+      if (!id) {
+        return [];
+      }
+
+      const activity = cellValue(cells, indexes.activity).match(ACTIVITY_PATTERN)?.[0]
+        ?? rowText.match(ACTIVITY_PATTERN)?.[0]
+        ?? "";
+
+      return [{
+        id,
+        activity,
+        breed: cellValue(cells, indexes.breed),
+        sex: cellValue(cells, indexes.sex),
+        birthDate: cellValue(cells, indexes.birthDate),
+        status: cellValue(cells, indexes.status)
+      }];
+    });
+  }
+
+  function totalRecords() {
+    const match = document.body.innerText.match(/\((\d+)\s+rekord(?:ów|y)?\)/i);
+    return match ? Number(match[1]) : null;
+  }
+
+  function findPageSizeButton() {
+    return [...document.querySelectorAll("button")].find((button) => {
+      if (normalize(button.textContent) !== "50" || button.disabled) {
+        return false;
+      }
+      const context = normalize(button.parentElement?.parentElement?.textContent);
+      return context.includes("Wyświetl na stronie");
+    }) ?? null;
+  }
+
+  function findNextPageButton() {
+    const pagination = [...document.querySelectorAll(
+      "irz-pagination, ngb-pagination, nav, [class*='pagination']"
+    )].find((candidate) => {
+      const text = normalize(candidate.textContent);
+      return text.includes("Strona") && /rekord/i.test(text);
+    });
+    if (!pagination) {
+      return null;
+    }
+
+    return [...pagination.querySelectorAll("button")].find((button) => {
+      if (button.disabled) {
+        return false;
+      }
+      const description = normalize([
+        button.getAttribute("aria-label"),
+        button.getAttribute("title"),
+        button.className,
+        button.innerHTML
+      ].join(" ")).toLowerCase();
+      return /następn|dalej|next|chevron-right|angle-right|arrow-right/.test(description);
+    }) ?? null;
+  }
+
+  function firstAnimalId() {
+    return extractAnimalsFromTable()[0]?.id ?? "";
+  }
+
+  async function waitForTableChange(previousFirstId, timeout = 8000) {
+    const deadline = Date.now() + timeout;
+    while (Date.now() < deadline) {
+      await new Promise((resolve) => setTimeout(resolve, 250));
+      const currentId = firstAnimalId();
+      if (currentId && currentId !== previousFirstId) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  async function collectAllAnimalPages() {
+    const collected = new Map();
+    const expectedTotal = totalRecords();
+    let rows = extractAnimalsFromTable();
+
+    if (expectedTotal && rows.length < expectedTotal) {
+      const pageSizeButton = findPageSizeButton();
+      if (pageSizeButton) {
+        const previousId = firstAnimalId();
+        pageSizeButton.click();
+        await waitForTableChange(previousId, 5000);
+      }
+    }
+
+    for (let page = 0; page < 200; page += 1) {
+      rows = extractAnimalsFromTable();
+      rows.forEach((animal) => collected.set(animal.id, animal));
+
+      if (!expectedTotal || collected.size >= expectedTotal) {
+        break;
+      }
+
+      const nextButton = findNextPageButton();
+      if (!nextButton) {
+        break;
+      }
+
+      const previousId = firstAnimalId();
+      nextButton.click();
+      const changed = await waitForTableChange(previousId);
+      if (!changed) {
+        break;
+      }
+    }
+
+    return {
+      animals: [...collected.values()],
+      expectedTotal
+    };
+  }
+
+  function romanValue(value) {
+    const roman = normalize(value).toUpperCase();
+    if (!/^(?:I|V|X|L|C)+$/.test(roman)) {
+      return 0;
+    }
+    const values = { I: 1, V: 5, X: 10, L: 50, C: 100 };
+    let total = 0;
+    for (let index = 0; index < roman.length; index += 1) {
+      const current = values[roman[index]];
+      const next = values[roman[index + 1]] ?? 0;
+      total += current < next ? -current : current;
+    }
+    return total;
+  }
+
+  function extractLatestDuplicate() {
+    const table = [...document.querySelectorAll("table")].find(
+      (candidate) => normalize(candidate.textContent).includes("Numer duplikatu")
+    );
+    if (!table) {
+      return "-";
+    }
+
+    const candidates = [...table.querySelectorAll("td")]
+      .map((cell) => normalize(cell.textContent))
+      .filter((value) => romanValue(value) > 0)
+      .sort((left, right) => romanValue(right) - romanValue(left));
+    return candidates[0] ?? "-";
+  }
+
+  function valueAfterLabel(pageText, label) {
+    const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const match = pageText.match(new RegExp(`${escaped}\\s+([^\\n]+)`, "i"));
+    return normalize(match?.[1]);
+  }
+
+  function birthReportedByActivity(activityNumber) {
+    const eventTable = [...document.querySelectorAll("table")].find((table) => {
+      const headers = tableHeaders(table).join(" | ");
+      return headers.includes("Typ zdarzenia") && headers.includes("Zgłaszająca działalność");
+    });
+    if (!eventTable) {
+      return false;
+    }
+
+    const headers = tableHeaders(eventTable);
+    const typeIndex = matchingHeaderIndex(headers, "Typ zdarzenia");
+    const reporterIndex = matchingHeaderIndex(headers, "Zgłaszająca działalność");
+    return [...eventTable.querySelectorAll("tbody tr")].some((row) => {
+      const cells = [...row.querySelectorAll("td")];
+      const type = cellValue(cells, typeIndex);
+      const reporter = cellValue(cells, reporterIndex);
+      return type.includes("Oznakowanie zwierzęcia urodzonego")
+        && reporter.includes(activityNumber);
+    });
+  }
+
+  function extractAnimalDetail(activityNumber) {
+    const pageText = document.body.innerText;
+    const arrivalDate = valueAfterLabel(pageText, "Data przybycia do działalności").match(/\d{2}-\d{2}-\d{4}/)?.[0] ?? "-";
+    const birthDate = valueAfterLabel(pageText, "Data urodzenia").match(/\d{2}-\d{2}-\d{4}/)?.[0] ?? "-";
+    const duplicateNumber = extractLatestDuplicate();
+    const birthAtActivity = birthReportedByActivity(activityNumber);
+    const origin = birthDate !== "-" && birthDate === arrivalDate && birthAtActivity ? "U" : "K";
+
+    return {
+      ready: arrivalDate !== "-" && pageText.includes("Środki identyfikacji"),
+      data: { arrivalDate, duplicateNumber, origin }
+    };
+  }
+
+  async function createControlList() {
+    if (state.collecting) {
+      return;
+    }
+
+    if (!validateActivity(elements.activity.value)) {
+      const numbers = pageActivityNumbers();
+      if (numbers.length > 0) {
+        elements.activity.value = numbers[0];
+      }
+    }
+    if (!await saveActivity()) {
+      return;
+    }
+
+    const stateDate = normalize(elements.controlDate.value);
+    if (!/^\d{2}-\d{2}-\d{4}$/.test(stateDate)) {
+      showMessage("Wpisz datę kontroli w formacie DD-MM-RRRR.", true);
+      elements.controlDate.focus();
+      return;
+    }
+
+    state.collecting = true;
+    elements.createList.disabled = true;
+    showMessage("Zbieram zwierzęta z tabeli...");
+
+    try {
+      const { animals, expectedTotal } = await collectAllAnimalPages();
+      if (animals.length === 0) {
+        throw new Error("Nie znaleziono zwierząt w tabeli wyników.");
+      }
+      if (expectedTotal && animals.length < expectedTotal) {
+        throw new Error(`Zebrano ${animals.length} z ${expectedTotal} zwierząt. Sprawdź paginację tabeli.`);
+      }
+      if (!globalThis.browser?.runtime?.sendMessage) {
+        throw new Error("Generowanie listy jest dostępne po wczytaniu rozszerzenia w Firefoksie.");
+      }
+
+      const result = await browser.runtime.sendMessage({
+        type: "irza-start-control-list",
+        animals,
+        activityNumber: state.activityNumber,
+        stateDate
+      });
+      showMessage(`Przygotowano listę dla ${result.count} zwierząt.`);
+    } catch (error) {
+      showMessage(error?.message || "Nie udało się przygotować listy.", true);
+    } finally {
+      state.collecting = false;
+      elements.createList.disabled = false;
+    }
+  }
+
   async function saveActivity() {
     const value = normalize(elements.activity.value);
     if (!validateActivity(value)) {
@@ -453,6 +753,7 @@
   function updateContext() {
     elements.module.textContent = currentModule();
     elements.reportSection.hidden = !isReportForm();
+    elements.listSection.hidden = !isAnimalList();
     const range = reportRange();
     elements.dateFrom.textContent = range.from;
     elements.dateTo.textContent = range.to;
@@ -471,6 +772,7 @@
   elements.save.addEventListener("click", saveActivity);
   elements.detect.addEventListener("click", detectActivity);
   elements.fillReport.addEventListener("click", fillReport);
+  elements.createList.addEventListener("click", createControlList);
   elements.activity.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
       event.preventDefault();
@@ -485,9 +787,29 @@
   });
   observer.observe(document.body, { childList: true, subtree: true });
 
+  if (globalThis.browser?.runtime?.onMessage) {
+    browser.runtime.onMessage.addListener((message) => {
+      if (message?.type === "irza-extract-animal-detail") {
+        return Promise.resolve(extractAnimalDetail(message.activityNumber));
+      }
+      if (message?.type === "irza-control-list-progress") {
+        showMessage(`Uzupełniam dane ${message.current} z ${message.total}: ${message.animalId}`);
+      }
+      return undefined;
+    });
+  }
+
   (async () => {
     state.activityNumber = normalize(await storage.get(STORAGE_KEY));
     elements.activity.value = state.activityNumber;
+    elements.controlDate.value = formatDate(new Date());
     updateContext();
   })();
+
+  if (["127.0.0.1", "localhost"].includes(location.hostname)) {
+    globalThis.__irzaTest = {
+      extractAnimalsFromTable,
+      extractAnimalDetail
+    };
+  }
 })();

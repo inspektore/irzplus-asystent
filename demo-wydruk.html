@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IRZplus Asystent - test wydruku</title>
+  <link rel="stylesheet" href="rozszerzenie/wydruk.css">
+</head>
+<body>
+  <div class="toolbar">
+    <button id="print" type="button">Drukuj lub zapisz PDF</button>
+    <button id="close" class="secondary" type="button">Zamknij</button>
+  </div>
+  <main>
+    <header>
+      <div><h1>Lista kontrolna zwierząt</h1><p>Numer działalności: <strong id="activity">-</strong></p></div>
+      <p>Stan na dzień: <strong id="state-date">-</strong></p>
+    </header>
+    <table>
+      <colgroup>
+        <col class="col-lp"><col class="col-id"><col class="col-check"><col class="col-last">
+        <col class="col-duplicate"><col class="col-sex"><col class="col-breed"><col class="col-date">
+        <col class="col-date"><col class="col-origin"><col class="col-age">
+      </colgroup>
+      <thead><tr><th>Lp</th><th>Numer identyfikacyjny</th><th></th><th>3 ost.</th><th>Nr dup.</th><th>Płeć</th><th>Rasa</th><th>Data ur.</th><th>Data przyb.</th><th>U/K</th><th>Wiek</th></tr></thead>
+      <tbody id="animals"></tbody><tfoot id="summary"></tfoot>
+    </table>
+    <p class="warning" id="warning" hidden></p>
+  </main>
+  <script>
+    window.__irzaPrintData = {
+      activityNumber: "123456789-001",
+      stateDate: "29-06-2026",
+      animals: [
+        { id: "PL009876543272", breed: "simentaler", sex: "Samica", birthDate: "06-08-2023", arrivalDate: "06-08-2023", duplicateNumber: "IV", origin: "U" },
+        { id: "PL009876543296", breed: "simentaler", sex: "Samica", birthDate: "27-04-2022", arrivalDate: "11-05-2024", duplicateNumber: "-", origin: "K" },
+        { id: "PL009876543333", breed: "polska holsztyńsko-fryzyjska odmiana czarno-biała", sex: "Samiec", birthDate: "26-05-2026", arrivalDate: "26-05-2026", duplicateNumber: "II", origin: "U" },
+        { id: "PL009876543478", breed: "polska holsztyńsko-fryzyjska odmiana czarno-biała", sex: "Samica", birthDate: "01-07-2019", arrivalDate: "01-07-2019", duplicateNumber: "IV", origin: "U" },
+        { id: "PL009876543515", breed: "mieszaniec", sex: "Samica", birthDate: "27-12-2019", arrivalDate: "13-02-2020", duplicateNumber: "I", origin: "K" },
+        { id: "PL009876543641", breed: "polska holsztyńsko-fryzyjska odmiana czarno-biała", sex: "Samica", birthDate: "17-10-2024", arrivalDate: "17-10-2024", duplicateNumber: "II", origin: "U" },
+        { id: "PL009876543658", breed: "simentaler", sex: "Samiec", birthDate: "20-10-2024", arrivalDate: "20-10-2024", duplicateNumber: "-", origin: "U" },
+        { id: "PL009876543665", breed: "simentaler", sex: "Samica", birthDate: "06-11-2024", arrivalDate: "06-11-2024", duplicateNumber: "-", origin: "U" },
+        { id: "PL009876543672", breed: "simentaler", sex: "Samiec", birthDate: "26-07-2025", arrivalDate: "26-07-2025", duplicateNumber: "-", origin: "U" },
+        { id: "PL009876543689", breed: "simentaler", sex: "Samiec", birthDate: "30-10-2025", arrivalDate: "30-10-2025", duplicateNumber: "-", origin: "U" },
+        { id: "PL009876543696", breed: "polska holsztyńsko-fryzyjska odmiana czarno-biała", sex: "Samiec", birthDate: "26-02-2026", arrivalDate: "26-02-2026", duplicateNumber: "-", origin: "U" }
+      ]
+    };
+  </script>
+  <script src="rozszerzenie/wydruk.js"></script>
+</body>
+</html>

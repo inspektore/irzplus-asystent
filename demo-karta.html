@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <title>IRZplus Asystent - test karty zwierzęcia</title>
+  <style>
+    body { font-family: "Segoe UI", Arial, sans-serif; padding: 30px; }
+    .fields { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .field { white-space: pre-line; }
+    table { width: 100%; margin-top: 20px; border-collapse: collapse; }
+    th, td { border-bottom: 1px solid #ccd4da; padding: 8px; text-align: left; }
+    pre { margin-top: 24px; padding: 12px; background: #eef3f5; }
+  </style>
+</head>
+<body>
+  <h1>Bydło</h1>
+  <p>Numer działalności: 123456789-001</p>
+  <section class="fields">
+    <div class="field">Numer identyfikacyjny zwierzęcia
+PL009876543333</div>
+    <div class="field">Data urodzenia
+26-05-2026</div>
+    <div class="field">Data przybycia do działalności
+26-05-2026</div>
+  </section>
+  <h2>Środki identyfikacji</h2>
+  <table>
+    <thead><tr><th>Rodzaj środka identyfikacji</th><th>Numer duplikatu</th><th>Data obowiązywania od</th></tr></thead>
+    <tbody>
+      <tr><td>zwykły kolczyk</td><td>II</td><td>12-01-2026</td></tr>
+      <tr><td>zwykły kolczyk</td><td>IV</td><td>26-05-2026</td></tr>
+    </tbody>
+  </table>
+  <h2>Zdarzenia</h2>
+  <table>
+    <thead><tr><th>Lp</th><th>Typ zdarzenia</th><th>Zgłaszająca działalność</th><th>Data zdarzenia</th></tr></thead>
+    <tbody><tr><td>1</td><td>Oznakowanie zwierzęcia urodzonego</td><td>123456789-001</td><td>26-05-2026</td></tr></tbody>
+  </table>
+  <pre id="result">Oczekiwanie na parser...</pre>
+  <script src="rozszerzenie/content.js"></script>
+  <script>
+    setTimeout(() => {
+      document.querySelector("#result").textContent = JSON.stringify(
+        window.__irzaTest.extractAnimalDetail("123456789-001")
+      );
+    }, 50);
+  </script>
+</body>
+</html>

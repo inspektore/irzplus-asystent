@@ -20,6 +20,28 @@ Lokalne rozszerzenie do Firefoksa, które usprawnia codzienną pracę w IRZplus.
   - oba zakresy dat od początku bieżącego roku do dzisiaj,
   - bez automatycznego wyboru gatunku,
   - bez automatycznego uruchomienia raportu.
+- zbieranie zwierząt z tabeli wyników dla działalności,
+- uzupełnianie danych z indywidualnych kart zwierząt:
+  - data przybycia,
+  - najwyższy, najnowszy numer duplikatu,
+  - oznaczenie `U/K`,
+- przygotowanie listy kontrolnej do wydruku lub zapisania jako PDF:
+  - format A4 pionowo,
+  - jeden niezawijany wiersz dla każdej sztuki,
+  - sortowanie według trzech ostatnich cyfr,
+  - wiek na wskazany dzień,
+  - podsumowanie płci, `U/K` i liczby zwierząt.
+
+## Przygotowanie listy kontrolnej
+
+1. Wyszukaj w IRZplus zwierzęta dla właściwego numeru działalności.
+2. Sprawdź, czy tabela zawiera oczekiwane zwierzęta.
+3. W panelu `IRZplus Asystent` ustaw numer działalności i datę `Stan na dzień`.
+4. Kliknij `Przygotuj listę`.
+5. Poczekaj na uzupełnienie kart zwierząt. Rozszerzenie wykorzystuje do tego jedną nieaktywną kartę Firefoksa.
+6. W otwartym podglądzie wybierz `Drukuj lub zapisz PDF`.
+
+Nie zamykaj pomocniczej karty podczas zbierania danych. Przed wykorzystaniem dokumentu sprawdź liczbę zwierząt i podsumowanie.
 
 ## Instalacja testowa w Firefoksie
 
@@ -31,10 +53,8 @@ Lokalne rozszerzenie do Firefoksa, które usprawnia codzienną pracę w IRZplus.
 
 Dodatek tymczasowy jest usuwany po zamknięciu Firefoksa. Dane zapisane przez rozszerzenie pozostają wyłącznie w lokalnej pamięci przeglądarki.
 
-## Planowane moduły
+## Dalszy rozwój
 
-- generowanie listy kontrolnej zwierząt w układzie A4 pionowo,
-- zbieranie danych z listy zwierząt i ich kart indywidualnych,
 - karta kontekstu zwierzęcia,
 - integracja z analizatorem przemieszczeń,
 - szybkie przejścia i kopiowanie danych pomiędzy modułami IRZplus.

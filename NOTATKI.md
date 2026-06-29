@@ -68,3 +68,39 @@ Późniejszy zakres:
 - połączenie z analizatorem przemieszczeń,
 - lokalne notatki do sprawy,
 - checklista sprawdzeń dla konkretnego typu problemu.
+
+## Ustalony zakres pierwszej wersji
+
+### Raport terminowości
+
+- narzędzie zapamiętuje lokalnie numer działalności,
+- uzupełnia oba zakresy: `Data wpływu` i `Data zdarzenia`,
+- data początkowa to 1 stycznia bieżącego roku,
+- data końcowa to bieżący dzień,
+- gatunek jest wybierany ręcznie,
+- użytkownik sam zatwierdza przyciskiem `Uruchom`.
+
+### Lista kontrolna zwierząt
+
+Źródła danych:
+
+- tabela zwierząt działalności: numer identyfikacyjny, rasa, płeć, data urodzenia i status,
+- karta indywidualna: data przybycia i środki identyfikacji,
+- zdarzenia zwierzęcia: ustalenie `U/K`.
+
+Reguły:
+
+- `U` oznacza urodzenie i oznakowanie w kontrolowanej działalności,
+- `K` oznacza przybycie z innej działalności,
+- numer duplikatu to najwyższy, najnowszy numer spośród aktualnych środków identyfikacji,
+- brak duplikatu jest prezentowany jako `-`,
+- wiek jest liczony na wybrany dzień kontroli,
+- zwierzęta są sortowane według trzech ostatnich cyfr numeru.
+
+Wynik:
+
+- wydruk A4 pionowo,
+- jedna sztuka w jednym niezawijanym wierszu,
+- nagłówek tabeli powtarzany na kolejnych stronach,
+- pusta kolumna do ręcznego oznaczenia,
+- podsumowanie płci, `U/K` i liczby zwierząt.

@@ -1,0 +1,164 @@
+:root {
+  color-scheme: light;
+  font-family: Arial, sans-serif;
+  color: #111;
+}
+
+* {
+  box-sizing: border-box;
+  letter-spacing: 0;
+}
+
+body {
+  margin: 0;
+  background: #eef1f3;
+}
+
+.toolbar {
+  position: sticky;
+  z-index: 2;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px;
+  border-bottom: 1px solid #c8d0d6;
+  background: #fff;
+}
+
+button {
+  min-height: 38px;
+  border: 1px solid #0b5cab;
+  border-radius: 4px;
+  padding: 0 14px;
+  background: #0b5cab;
+  color: #fff;
+  font: 700 14px/1 Arial, sans-serif;
+  cursor: pointer;
+}
+
+button.secondary {
+  background: #fff;
+  color: #0b5cab;
+}
+
+main {
+  width: 210mm;
+  min-height: 297mm;
+  margin: 14px auto;
+  padding: 9mm 8mm;
+  background: #fff;
+  box-shadow: 0 2px 14px rgba(18, 34, 46, 0.14);
+}
+
+header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 10mm;
+  margin-bottom: 4mm;
+}
+
+h1 {
+  margin: 0 0 1.5mm;
+  font-size: 14pt;
+}
+
+p {
+  margin: 0;
+  font-size: 8pt;
+}
+
+table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  font-size: 7.2pt;
+}
+
+thead {
+  display: table-header-group;
+}
+
+tr {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+th,
+td {
+  height: 6.5mm;
+  overflow: hidden;
+  border: 0.25mm solid #222;
+  padding: 0.8mm 1mm;
+  vertical-align: middle;
+  white-space: nowrap;
+  text-overflow: clip;
+}
+
+th {
+  background: #d9dde0;
+  font-weight: 700;
+  text-align: left;
+}
+
+td.center,
+th:first-child {
+  text-align: center;
+}
+
+td.last-digits {
+  font-weight: 700;
+  text-align: center;
+}
+
+td.male,
+tfoot td.sex-summary {
+  background: #fff23d;
+}
+
+tfoot td {
+  font-weight: 700;
+}
+
+.warning {
+  margin-top: 3mm;
+  color: #7a271a;
+  font-size: 7pt;
+}
+
+.col-lp { width: 5%; }
+.col-id { width: 20%; }
+.col-check { width: 3%; }
+.col-last { width: 7%; }
+.col-duplicate { width: 7%; }
+.col-sex { width: 9%; }
+.col-breed { width: 6%; }
+.col-date { width: 12%; }
+.col-origin { width: 6%; }
+.col-age { width: 10%; }
+
+@page {
+  size: A4 portrait;
+  margin: 8mm;
+}
+
+@media print {
+  body {
+    background: #fff;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .toolbar {
+    display: none;
+  }
+
+  main {
+    width: auto;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+  }
+}

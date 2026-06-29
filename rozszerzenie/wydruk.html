@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lista kontrolna zwierząt</title>
+  <link rel="stylesheet" href="wydruk.css">
+</head>
+<body>
+  <div class="toolbar">
+    <button id="print" type="button">Drukuj lub zapisz PDF</button>
+    <button id="close" class="secondary" type="button">Zamknij</button>
+  </div>
+  <main>
+    <header>
+      <div>
+        <h1>Lista kontrolna zwierząt</h1>
+        <p>Numer działalności: <strong id="activity">-</strong></p>
+      </div>
+      <p>Stan na dzień: <strong id="state-date">-</strong></p>
+    </header>
+    <table>
+      <colgroup>
+        <col class="col-lp"><col class="col-id"><col class="col-check"><col class="col-last">
+        <col class="col-duplicate"><col class="col-sex"><col class="col-breed"><col class="col-date">
+        <col class="col-date"><col class="col-origin"><col class="col-age">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>Lp</th><th>Numer identyfikacyjny</th><th></th><th>3 ost.</th><th>Nr dup.</th>
+          <th>Płeć</th><th>Rasa</th><th>Data ur.</th><th>Data przyb.</th><th>U/K</th><th>Wiek</th>
+        </tr>
+      </thead>
+      <tbody id="animals"></tbody>
+      <tfoot id="summary"></tfoot>
+    </table>
+    <p class="warning" id="warning" hidden></p>
+  </main>
+  <script src="wydruk.js"></script>
+</body>
+</html>
