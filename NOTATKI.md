@@ -104,3 +104,12 @@ Wynik:
 - nagłówek tabeli powtarzany na kolejnych stronach,
 - pusta kolumna do ręcznego oznaczenia,
 - podsumowanie płci, `U/K` i liczby zwierząt.
+
+### Lista potomstwa
+
+Planowana funkcja:
+
+- przyjęcie numeru kolczyka matki jako danych wejściowych,
+- wykorzystanie filtra `Numer identyfikacyjny matki` w wyszukiwarce zwierząt,
+- zebranie wszystkich znalezionych potomków,
+- przygotowanie zbiorczej listy potomstwa do dalszej analizy lub wydruku.

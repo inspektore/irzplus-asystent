@@ -56,5 +56,6 @@ Dodatek tymczasowy jest usuwany po zamknięciu Firefoksa. Dane zapisane przez ro
 ## Dalszy rozwój
 
 - karta kontekstu zwierzęcia,
+- generowanie listy potomstwa na podstawie numeru kolczyka matki,
 - integracja z analizatorem przemieszczeń,
 - szybkie przejścia i kopiowanie danych pomiędzy modułami IRZplus.
