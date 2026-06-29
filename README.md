@@ -1,37 +1,40 @@
 # IRZplus Asystent
 
-Oddzielny projekt dla nakładki/asystenta pracy z IRZplus.
+Lokalne rozszerzenie do Firefoksa, które usprawnia codzienną pracę w IRZplus. Projekt jest rozwijany jako osobna aplikacja i nie ogranicza się do analizy przemieszczeń.
 
-Cel projektu: poprawić ergonomię codziennej pracy na stronie IRZplus, szczególnie tam, gdzie informacje są pochowane, wymagają wielu kliknięć albo trudno je zestawić w jednym widoku.
+## Bezpieczeństwo
 
-## Założenia
+- użytkownik loguje się do IRZplus samodzielnie,
+- rozszerzenie nie odczytuje ani nie przechowuje loginu i hasła,
+- dane nie są wysyłane poza komputer,
+- rozszerzenie uruchamia się tylko na `https://irz.arimr.gov.pl/`,
+- jest to wersja testowa i może zawierać błędy.
 
-- Użytkownik loguje się do IRZplus samodzielnie.
-- Aplikacja nie przechowuje loginu ani hasła.
-- Pierwsze wersje powinny działać lokalnie i możliwie bezpiecznie.
-- Projekt nie jest ograniczony tylko do historii zdarzeń zwierzęcia.
-- Funkcje mają wynikać z realnych problemów użytkowych na stronie.
+## Aktualny zakres
 
-## Możliwe kierunki
+- panel pomocniczy widoczny na stronach IRZplus,
+- lokalne zapamiętywanie numeru działalności,
+- pobieranie numeru działalności z aktualnej strony,
+- automatyczne uzupełnianie formularza raportu terminowości:
+  - numer działalności,
+  - oba zakresy dat od początku bieżącego roku do dzisiaj,
+  - bez automatycznego wyboru gatunku,
+  - bez automatycznego uruchomienia raportu.
 
-- panel boczny z najważniejszym kontekstem aktualnej sprawy,
-- szybkie kopiowanie numerów zwierząt, dokumentów i działalności,
-- podświetlanie powiązanych numerów na stronie,
-- wykrywanie aktualnego ekranu IRZplus,
-- skróty do często używanych sekcji,
-- zbieranie danych z widocznych tabel,
-- przekazywanie danych do analizatora przemieszczeń,
-- lokalne notatki do sprawy,
-- raport pomocniczy z aktualnego widoku.
+## Instalacja testowa w Firefoksie
 
-## Forma techniczna do rozważenia
+1. Otwórz w Firefoksie stronę `about:debugging`.
+2. Wybierz `Ten Firefox`.
+3. Kliknij `Wczytaj tymczasowy dodatek`.
+4. Wskaż plik `rozszerzenie/manifest.json` z tego projektu.
+5. Otwórz lub odśwież stronę IRZplus.
 
-1. Bookmarklet lub skrypt uruchamiany ręcznie na stronie.
-2. Rozszerzenie przeglądarki.
-3. Lokalna aplikacja pomocnicza współpracująca z przeglądarką.
+Dodatek tymczasowy jest usuwany po zamknięciu Firefoksa. Dane zapisane przez rozszerzenie pozostają wyłącznie w lokalnej pamięci przeglądarki.
 
-Na start najrozsądniejszy jest szybki prototyp jako nakładka uruchamiana na aktualnie otwartej stronie. Docelowo wygodniejsze będzie rozszerzenie przeglądarki.
+## Planowane moduły
 
-## Status
-
-Szkielet projektu. Bez połączenia z IRZplus i bez gotowych funkcji produkcyjnych.
+- generowanie listy kontrolnej zwierząt w układzie A4 pionowo,
+- zbieranie danych z listy zwierząt i ich kart indywidualnych,
+- karta kontekstu zwierzęcia,
+- integracja z analizatorem przemieszczeń,
+- szybkie przejścia i kopiowanie danych pomiędzy modułami IRZplus.

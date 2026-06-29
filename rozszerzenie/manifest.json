@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "IRZplus Asystent",
+  "version": "0.1.0",
+  "description": "Lokalny asystent usprawniajacy prace w IRZplus.",
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "https://irz.arimr.gov.pl/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://irz.arimr.gov.pl/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "irzplus-asystent@inspektore.local",
+      "strict_min_version": "121.0"
+    }
+  }
+}
